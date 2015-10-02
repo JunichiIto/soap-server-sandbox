@@ -1,0 +1,41 @@
+#!/usr/bin/env ruby
+# begin
+#   load File.expand_path("../spring", __FILE__)
+# rescue LoadError
+# end
+APP_PATH = File.expand_path('../../config/application', __FILE__)
+require_relative '../config/boot'
+
+# http://ben.vandgrift.com/2011/06/17/secure_communication_rails_3.html
+# http://qiita.com/GenTamura84/items/a1af6e9b5eb69d5469b7
+require 'rubygems'
+require 'rails/commands/server'
+require 'rack'
+require 'webrick'
+require 'webrick/https'
+
+module Rails
+  class Server < ::Rack::Server
+    def default_options
+      super.merge({
+                      :Port => 3443,
+                      :environment => (ENV['RAILS_ENV'] || "development").dup,
+                      :daemonize => false,
+                      :debugger => false,
+                      :pid => File.expand_path("tmp/pids/server.pid"),
+                      :config => File.expand_path("config.ru"),
+                      :SSLEnable => true,
+                      :SSLVerifyClient => OpenSSL::SSL::VERIFY_PEER,
+                      :SSLPrivateKey => OpenSSL::PKey::RSA.new(
+                          File.open(File.expand_path("ssl/newkey.pem")).read),
+                      :SSLCertificate => OpenSSL::X509::Certificate.new(
+                          File.open(File.expand_path("ssl/newcert.pem")).read),
+                      :SSLCACertificateFile => File.expand_path("~/demoCA/cacert.pem"),
+                      :SSLCertName => [["CN", WEBrick::Utils::getservername]]
+                  })
+    end
+  end
+end
+
+
+require 'rails/commands'
