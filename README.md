@@ -21,4 +21,4 @@ SOAP通信 + SSLクライアント証明書の実験をするためのRailsア�
   - `~/demoCA/cacert.pem`
 7. サーバーを起動する
   - `bin/rails_https s`
-8. soap-client-sandboxから正常にアクセスできることを確認する
+8. [soap-client-sandbox](https://github.com/JunichiIto/soap-client-sandbox) から正常にアクセスできることを確認する
